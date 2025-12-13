@@ -189,11 +189,9 @@ Export summaries as text or PDF
 Role-based summaries (student, manager, researcher)
 
 📌 Conclusion
+The Gen-AI PDF Analyzer and chatbot shows how AI can significantly reduce information overload by converting lengthy documents into actionable insights.
 
-The Gen-AI PDF Analyzer shows how AI can significantly reduce information overload by converting lengthy documents into actionable insights.
-
-This project highlights:
-
+**This project highlights:
 AI integration
 
 Backend logic
@@ -204,14 +202,4 @@ Secure API usage
 
 Real-world applicability
 
-If you want, next I can:
 
-Shorten this for 2-minute judge explanation
-
-Create a project pitch script
-
-Simplify it for non-technical judges
-
-Help you answer expected hackathon questions
-
-Just tell me what you want next.
