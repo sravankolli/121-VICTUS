@@ -17,3 +17,9 @@ Use of the PDF File Analyser
 - Makes documents interactive: You can ask questions about the PDF and get answers instantly.
 - Helps in research/work: Useful for students, professionals, or anyone dealing with reports, contracts, or papers.
 - Organizes information: Extracts keywords, topics, and metadata to make content easier to navigate.
+
+ Purpose of Building It (Hackathon Context)
+- Showcase AI integration: Demonstrates how GenAI can enhance everyday tasks.
+- Solve a real-world pain point: PDFs are everywhere, but they’re hard to search or digest quickly.
+- Team learning: Each member gets hands-on experience with backend, frontend, AI, and presentation.
+- Impress judges: It’s practical, relatable, and demo-friendly (easy to show live).
