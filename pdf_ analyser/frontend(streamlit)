@@ -1,17 +1,95 @@
 import os
 import streamlit as st
 import pdfplumber
-import openai
+from groq import Groq
 
-# ---------- API KEY ----------
+# -------------------------------------------------
+# GROQ CLIENT SETUP
+# -------------------------------------------------
+client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
-openai.api_key = os.getenv("OPENAI_API_KEY")
+# -------------------------------------------------
+# STREAMLIT UI
+# -------------------------------------------------
+st.set_page_config(page_title="Gen AI PDF Analyzer (Groq)", layout="centered")
 
-# ---------- STREAMLIT UI ----------
-st.set_page_config(page_title="Gen AI PDF Analyzer", layout="centered")
-
-st.title("📄 Gen AI PDF Analyzer")
-st.write("Upload a PDF, get an AI summary, and ask questions.")
+st.title("📄 Gen AI PDF Analyzer (Groq)")
+st.write("Upload a PDF → Get AI summary → Ask questions")
 
 uploaded_file = st.file_uploader("Upload a PDF", type=["pdf"])
 question = st.text_input("Ask a question about the document (optional)")
+
+# -------------------------------------------------
+# BUTTON ACTION
+# -------------------------------------------------
+if st.button("Analyze"):
+    if uploaded_file is None:
+        st.warning("Please upload a PDF first.")
+    else:
+        with st.spinner("Reading PDF and analyzing with Groq..."):
+
+            # 1️⃣ Extract text from PDF
+            text = ""
+            with pdfplumber.open(uploaded_file) as pdf:
+                for page in pdf.pages:
+                    page_text = page.extract_text()
+                    if page_text:
+                        text += page_text + "\n"
+
+            if not text.strip():
+                st.error("No readable text found in this PDF.")
+            else:
+                # 2️⃣ Trim text (important for speed & limits)
+                trimmed_text = text[:4000]
+
+                # 3️⃣ SUMMARY PROMPT
+                summary_prompt = f"""
+                Read the document below and provide:
+                1) One-sentence summary
+                2) Three key points
+                3) Two-line explanation for a beginner
+
+                Document:
+                \"\"\"{trimmed_text}\"\"\"
+                """
+
+                # 4️⃣ GROQ SUMMARY CALL
+                summary_response = client.chat.completions.create(
+                    model="llama-3.1-8b-instant",
+                    messages=[
+                        {"role": "user", "content": summary_prompt}
+                    ],
+                    temperature=0.2,
+                )
+
+                summary = summary_response.choices[0].message.content
+
+                # 5️⃣ DISPLAY SUMMARY
+                st.subheader("📌 AI Summary")
+                st.write(summary)
+
+                # 6️⃣ OPTIONAL Q&A
+                if question:
+                    qa_prompt = f"""
+                    Use the document below to answer the question clearly.
+
+                    Document:
+                    \"\"\"{trimmed_text}\"\"\"
+
+                    Question: {question}
+                    """
+
+                    qa_response = client.chat.completions.create(
+                        model="llama-3.1-8b-instant",
+                        messages=[
+                            {"role": "user", "content": qa_prompt}
+                        ],
+                        temperature=0.2,
+                    )
+
+                    answer = qa_response.choices[0].message.content
+
+                    st.subheader("❓ Answer")
+                    st.write(answer)
+
+        st.success("Analysis complete!")
