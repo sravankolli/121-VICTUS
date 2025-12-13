@@ -23,3 +23,5 @@ Use of the PDF File Analyser
 - Solve a real-world pain point: PDFs are everywhere, but they’re hard to search or digest quickly.
 - Team learning: Each member gets hands-on experience with backend, frontend, AI, and presentation.
 - Impress judges: It’s practical, relatable, and demo-friendly (easy to show live).
+
+for first we are creating the frontend part for the code using clude ai so we are using that 
