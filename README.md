@@ -1,177 +1,217 @@
 # 📄 PDF AI Analyzer - Project Documentation
 
 **TEAM NAME:** team VICTUS 
-**Project Type:** Frontend Development with AI Integration  
-**Technology Stack:** React.js, Tailwind CSS, Claude AI API  
+Problem Statement
 
-PDF AI Analyzer - Full Stack Application
-A powerful PDF analysis application with real AI-powered insights using Claude API.
-🚀 Features
+In hackathons, universities, and workplaces, people frequently deal with large PDF documents such as:
 
-Real PDF Text Extraction - Extract text from any PDF document
-AI-Powered Analysis - Get intelligent insights using Claude AI
-Multiple Analysis Modes - Brief, Detailed, and Keywords extraction
-Batch Processing - Analyze multiple PDFs at once
-Analysis History - Save and revisit past analyses
-Statistics Dashboard - Track your usage
-Dark Mode - Easy on the eyes
-Export & Copy - Download or copy results instantly
+Research papers
 
-📋 Prerequisites
+Lecture notes
 
-Node.js (v16 or higher)
-npm or yarn
-Anthropic API Key (Get one here)
+Policies and reports
 
-🛠️ Backend Setup
-1. Create Backend Directory
-bashmkdir pdf-analyzer-backend
-cd pdf-analyzer-backend
-2. Initialize Project
-bashnpm init -y
-3. Install Dependencies
-bashnpm install express cors dotenv multer pdf-parse @anthropic-ai/sdk
-npm install --save-dev nodemon
-4. Create Files
-Create the following files in your backend directory:
+Technical documentation
 
-server.js - Main server file (copy from artifact)
-package.json - Already created, update scripts section
-.env - Environment variables
+Reading and understanding these documents is time-consuming, especially when users only need key insights or specific answers.
 
-5. Configure Environment Variables
-Create a .env file:
-bashANTHROPIC_API_KEY=your_actual_api_key_here
-PORT=3001
-NODE_ENV=development
-Important: Replace your_actual_api_key_here with your actual Anthropic API key.
-6. Update package.json Scripts
-Add these scripts to your package.json:
-json{
-  "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js"
-  }
-}
-7. Start the Backend Server
-bashnpm run dev
-The server will start on http://localhost:3001
-🎨 Frontend Setup
-Option A: Using the React Component in Your Existing Project
+The problem:
+👉 Users waste time manually reading long PDFs to extract summaries and answers.
 
-Copy the updated React component code
-Make sure you have the required dependencies:
+💡 Solution Overview
 
-bashnpm install lucide-react
+We built a Gen-AI powered PDF Analyzer that:
 
-Update the API_URL if your backend is on a different port
+Accepts a PDF file
 
-Option B: Create React App from Scratch
-bashnpx create-react-app pdf-analyzer-frontend
-cd pdf-analyzer-frontend
-npm install lucide-react
-Replace the contents of src/App.js with the updated frontend component.
-Start Frontend
-bashnpm start
-The app will open at http://localhost:3000
-🔧 API Endpoints
-Health Check
-GET /health
-Analyze Single PDF
-POST /api/analyze
-Content-Type: multipart/form-data
+Extracts readable text automatically
 
-Body:
-- pdf: PDF file
-- mode: "brief" | "detailed" | "keywords"
-Analyze Multiple PDFs
-POST /api/analyze-batch
-Content-Type: multipart/form-data
+Uses a Large Language Model (Groq LLM) to:
 
-Body:
-- pdfs: Array of PDF files (max 10)
-- mode: "brief" | "detailed" | "keywords"
-Extract Text Only
-POST /api/extract-text
-Content-Type: multipart/form-data
+Generate a concise summary
 
-Body:
-- pdf: PDF file
-📝 Usage
+Highlight key points
 
-Upload PDFs - Click the upload area and select one or multiple PDF files
-Select Mode - Choose between Brief, Detailed, or Keywords analysis
-Analyze - Click "Analyze with AI" to get insights
-Review Results - Read the AI-generated analysis
-Export - Download as text or copy to clipboard
-History - Access previous analyses anytime
+Answer user questions based on the document content
 
-🔒 Security Notes
+This allows users to understand documents faster without reading everything.
 
-Never commit your .env file to version control
-Add .env to your .gitignore file
-Keep your API keys secure
-Consider implementing rate limiting for production
-Add authentication for production deployments
+🚀 Key Features
 
-📦 Project Structure
-pdf-analyzer/
-├── backend/
-│   ├── server.js
-│   ├── package.json
-│   ├── .env
-│   └── .gitignore
-└── frontend/
-    ├── src/
-    │   ├── App.js
-    │   └── ...
-    ├── package.json
-    └── public/
-🐛 Troubleshooting
-Backend won't start
+📂 PDF Upload – Upload any text-based PDF
 
-Check if port 3001 is available
-Verify your Anthropic API key is correct
-Ensure all dependencies are installed
+🧠 AI-Generated Summary
 
-CORS errors
+One-sentence overview
 
-Make sure backend is running on port 3001
-Check CORS configuration in server.js
+Three key points
 
-PDF parsing fails
+Beginner-friendly explanation
 
-Ensure PDFs are not password-protected
-Check file size (max 10MB by default)
-Verify PDF is not corrupted
+❓ Contextual Q&A
 
-API calls fail
+Ask questions directly related to the PDF
 
-Verify backend URL in frontend (API_URL constant)
-Check browser console for errors
-Ensure backend server is running
+⚡ Fast Responses
 
-🚀 Deployment
-Backend (Heroku, Railway, etc.)
+Powered by Groq’s ultra-low-latency LLMs
 
-Set environment variables in your hosting platform
-Update CORS origins for your frontend domain
-Deploy backend code
+💻 Simple Web Interface
 
-Frontend (Vercel, Netlify, etc.)
+Built using Streamlit
 
-Update API_URL to your backend URL
-Build the frontend: npm run build
-Deploy the build folder
+🔐 Secure API Handling
 
-📄 License
-MIT License - Feel free to use this project for personal or commercial purposes.
-🤝 Contributing
-Contributions are welcome! Please feel free to submit a Pull Request.
-💡 Tips
+API keys managed via environment variables (not hardcoded)
 
-Use the "Brief" mode for quick summaries
-Use "Detailed" for comprehensive analysis
-Use "Keywords" for quick topic identification
-Enable dark mode for comfortable viewing
-Check history to compare analyses
+🧱 Tech Stack
+Component	Technology
+Frontend / UI	Streamlit
+Backend Language	Python
+PDF Processing	pdfplumber
+AI Model Provider	Groq
+LLM Model	LLaMA-3.1-8B-Instant
+Environment	Python Virtual Environment
+🧠 Why Groq?
+
+We chose Groq AI because:
+
+It offers very fast inference
+
+Has a free developer tier
+
+Uses an OpenAI-compatible API
+
+Ideal for real-time hackathon demos
+
+The architecture is provider-agnostic, meaning the backend can switch to OpenAI, Gemini, or other LLMs with minimal changes.
+
+⚙️ Application Workflow
+
+User uploads a PDF
+
+PDF text is extracted using pdfplumber
+
+Text is trimmed to stay within model limits
+
+A structured prompt is created
+
+Prompt is sent to Groq LLM
+
+AI returns:
+
+Summary
+
+Key points
+
+Answers to questions
+
+Results are displayed in the web UI
+
+🧪 Example Use Cases
+
+📚 Students summarizing lecture notes
+
+🔬 Researchers scanning papers quickly
+
+🏢 Employees reviewing policy documents
+
+👩‍🏫 Teachers creating simplified explanations
+
+🧑‍💻 Hackathon teams analyzing documentation
+
+🛠️ How to Run the Project Locally
+1️⃣ Clone / Download the Project
+git clone <repo-url>
+cd gen_ai
+
+2️⃣ Create and Activate Virtual Environment
+python -m venv venv
+.\venv\Scripts\activate
+
+3️⃣ Install Dependencies
+pip install streamlit pdfplumber groq
+
+4️⃣ Set Groq API Key (PowerShell)
+$env:GROQ_API_KEY="gsk_your_api_key_here"
+
+5️⃣ Run the App
+streamlit run app.py
+
+🧠 Prompt Design Strategy
+
+The prompt is carefully structured to:
+
+Avoid hallucinations
+
+Stay focused on document content
+
+Produce beginner-friendly explanations
+
+Ensure answers are context-aware
+
+This improves accuracy and usability.
+
+🔒 Security Considerations
+
+API keys are never hardcoded
+
+Environment variables are used
+
+No user data is stored permanently
+
+All processing happens during runtime only
+
+🏆 Hackathon Value Proposition
+
+This project demonstrates:
+
+Practical use of Generative AI
+
+End-to-end AI workflow
+
+Clean backend logic
+
+Real-world problem solving
+
+Scalable and extensible architecture
+
+🔮 Future Enhancements
+
+Support for scanned PDFs (OCR)
+
+Chunking for very large documents
+
+Multiple document comparison
+
+Export summaries as text or PDF
+
+Role-based summaries (student, manager, researcher)
+
+📌 Conclusion
+
+The Gen-AI PDF Analyzer shows how AI can significantly reduce information overload by converting lengthy documents into actionable insights.
+
+This project highlights:
+
+AI integration
+
+Backend logic
+
+UI design
+
+Secure API usage
+
+Real-world applicability
+
+If you want, next I can:
+
+Shorten this for 2-minute judge explanation
+
+Create a project pitch script
+
+Simplify it for non-technical judges
+
+Help you answer expected hackathon questions
+
+Just tell me what you want next.
