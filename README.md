@@ -4,288 +4,174 @@
 **Project Type:** Frontend Development with AI Integration  
 **Technology Stack:** React.js, Tailwind CSS, Claude AI API  
 
----
+PDF AI Analyzer - Full Stack Application
+A powerful PDF analysis application with real AI-powered insights using Claude API.
+🚀 Features
 
-## 📌 Project Overview
+Real PDF Text Extraction - Extract text from any PDF document
+AI-Powered Analysis - Get intelligent insights using Claude AI
+Multiple Analysis Modes - Brief, Detailed, and Keywords extraction
+Batch Processing - Analyze multiple PDFs at once
+Analysis History - Save and revisit past analyses
+Statistics Dashboard - Track your usage
+Dark Mode - Easy on the eyes
+Export & Copy - Download or copy results instantly
 
-This is a web-based PDF analysis application that uses Artificial Intelligence to automatically analyze PDF documents and provide intelligent insights. The application features a modern, user-friendly interface built with React and integrates with Claude AI for document processing.
+📋 Prerequisites
 
----
+Node.js (v16 or higher)
+npm or yarn
+Anthropic API Key (Get one here)
 
-## ✨ Key Features Implemented
+🛠️ Backend Setup
+1. Create Backend Directory
+bashmkdir pdf-analyzer-backend
+cd pdf-analyzer-backend
+2. Initialize Project
+bashnpm init -y
+3. Install Dependencies
+bashnpm install express cors dotenv multer pdf-parse @anthropic-ai/sdk
+npm install --save-dev nodemon
+4. Create Files
+Create the following files in your backend directory:
 
-1. **PDF Upload System**
-   - Drag-and-drop file upload
-   - File validation (accepts only PDF files)
-   - Display file information (name, size)
+server.js - Main server file (copy from artifact)
+package.json - Already created, update scripts section
+.env - Environment variables
 
-2. **AI-Powered Analysis**
-   - Integration with Claude AI API
-   - Automatic document summarization
-   - Key topics and themes extraction
-   - Important findings identification
-   - Document categorization
+5. Configure Environment Variables
+Create a .env file:
+bashANTHROPIC_API_KEY=your_actual_api_key_here
+PORT=3001
+NODE_ENV=development
+Important: Replace your_actual_api_key_here with your actual Anthropic API key.
+6. Update package.json Scripts
+Add these scripts to your package.json:
+json{
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  }
+}
+7. Start the Backend Server
+bashnpm run dev
+The server will start on http://localhost:3001
+🎨 Frontend Setup
+Option A: Using the React Component in Your Existing Project
 
-3. **User Interface**
-   - Modern, responsive design
-   - Gradient backgrounds and smooth animations
-   - Loading states and error handling
-   - Clean, intuitive user experience
-   - Mobile-responsive layout
+Copy the updated React component code
+Make sure you have the required dependencies:
 
-4. **Technical Implementation**
-   - React Hooks (useState for state management)
-   - File reading and base64 conversion
-   - RESTful API integration
-   - Async/await for asynchronous operations
-   - Error handling and user feedback
+bashnpm install lucide-react
 
----
+Update the API_URL if your backend is on a different port
 
-## 🛠️ Technologies Used
+Option B: Create React App from Scratch
+bashnpx create-react-app pdf-analyzer-frontend
+cd pdf-analyzer-frontend
+npm install lucide-react
+Replace the contents of src/App.js with the updated frontend component.
+Start Frontend
+bashnpm start
+The app will open at http://localhost:3000
+🔧 API Endpoints
+Health Check
+GET /health
+Analyze Single PDF
+POST /api/analyze
+Content-Type: multipart/form-data
 
-| Technology | Purpose |
-|------------|---------|
-| **React 18+** | Frontend framework for building UI |
-| **Tailwind CSS** | Utility-first CSS framework for styling |
-| **Lucide React** | Icon library for UI elements |
-| **Claude AI API** | AI service for document analysis |
-| **JavaScript ES6+** | Core programming language |
-| **HTML5** | Document structure |
-| **CSS3** | Styling and animations |
+Body:
+- pdf: PDF file
+- mode: "brief" | "detailed" | "keywords"
+Analyze Multiple PDFs
+POST /api/analyze-batch
+Content-Type: multipart/form-data
 
----
+Body:
+- pdfs: Array of PDF files (max 10)
+- mode: "brief" | "detailed" | "keywords"
+Extract Text Only
+POST /api/extract-text
+Content-Type: multipart/form-data
 
-## 📋 Prerequisites for Running the Project
+Body:
+- pdf: PDF file
+📝 Usage
 
-Before running this project, please ensure you have:
+Upload PDFs - Click the upload area and select one or multiple PDF files
+Select Mode - Choose between Brief, Detailed, or Keywords analysis
+Analyze - Click "Analyze with AI" to get insights
+Review Results - Read the AI-generated analysis
+Export - Download as text or copy to clipboard
+History - Access previous analyses anytime
 
-1. **Node.js** (version 14.0 or higher)
-   - Download from: https://nodejs.org/
-   - Verify installation: `node --version`
+🔒 Security Notes
 
-2. **npm** (Node Package Manager - comes with Node.js)
-   - Verify installation: `npm --version`
+Never commit your .env file to version control
+Add .env to your .gitignore file
+Keep your API keys secure
+Consider implementing rate limiting for production
+Add authentication for production deployments
 
-3. **Internet Connection** (for downloading packages and API calls)
-
-4. **Modern Web Browser** (Chrome, Firefox, Edge, or Safari)
-
----
-
-## 🚀 Installation & Setup Instructions
-
-### **Step 1: Extract/Navigate to Project Folder**
-```bash
-cd pdf-analyzer
-```
-
-### **Step 2: Install Dependencies**
-This will install all required packages (React, Tailwind CSS, Lucide icons, etc.)
-```bash
-npm install
-```
-
-**Note:** This may take 2-3 minutes to complete.
-
-### **Step 3: Verify Installation**
-Check if all packages are installed correctly:
-```bash
-npm list --depth=0
-```
-
-You should see:
-- react
-- react-dom
-- lucide-react
-- tailwindcss
-- And other dependencies
-
-### **Step 4: Start the Development Server**
-```bash
-npm start
-```
-
-**Expected Output:**
-```
-Compiled successfully!
-
-You can now view pdf-analyzer in the browser.
-
-  Local:            http://localhost:3000
-  On Your Network:  http://192.168.x.x:3000
-
-Note that the development build is not optimized.
-To create a production build, use npm run build.
-```
-
-### **Step 5: View the Application**
-- The application will automatically open in your default browser
-- If not, manually open: `http://localhost:3000`
-
----
-
-## 📖 How to Test the Application
-
-### **Testing the Upload Feature:**
-1. Click on the upload area or "Choose File" button
-2. Select any PDF file from your computer
-3. Verify that the file name and size are displayed correctly
-4. Click the "Analyze with AI" button
-
-### **Testing the UI:**
-1. Check responsive design (resize browser window)
-2. Hover over buttons (should see color changes)
-3. Test the "Remove file" button (trash icon)
-4. Verify loading animation appears during analysis
-
-### **Testing Error Handling:**
-1. Try uploading a non-PDF file (should show error message)
-2. Check that error messages are clearly displayed
-
----
-
-## 📁 Project Structure
-```
+📦 Project Structure
 pdf-analyzer/
-│
-├── public/                  # Static files
-│   ├── index.html          # HTML template
-│   └── favicon.ico         # App icon
-│
-├── src/                    # Source code
-│   ├── App.js             # Main application component (MAIN FILE)
-│   ├── index.js           # Entry point
-│   ├── index.css          # Tailwind CSS imports
-│   └── App.test.js        # Test file
-│
-├── node_modules/          # Installed dependencies (auto-generated)
-│
-├── package.json           # Project dependencies and scripts
-├── tailwind.config.js     # Tailwind CSS configuration
-├── postcss.config.js      # PostCSS configuration
-└── README.md             # This file
-```
+├── backend/
+│   ├── server.js
+│   ├── package.json
+│   ├── .env
+│   └── .gitignore
+└── frontend/
+    ├── src/
+    │   ├── App.js
+    │   └── ...
+    ├── package.json
+    └── public/
+🐛 Troubleshooting
+Backend won't start
 
----
+Check if port 3001 is available
+Verify your Anthropic API key is correct
+Ensure all dependencies are installed
 
-## 💻 Code Highlights
+CORS errors
 
-### **Main Component Structure (App.js)**
-```javascript
-// State Management
-const [file, setFile] = useState(null);           // Stores uploaded PDF
-const [analyzing, setAnalyzing] = useState(false); // Loading state
-const [analysis, setAnalysis] = useState(null);    // AI response
-const [error, setError] = useState(null);          // Error messages
+Make sure backend is running on port 3001
+Check CORS configuration in server.js
 
-// Key Functions:
-// 1. handleFileUpload() - Handles PDF file upload and validation
-// 2. analyzePDF() - Sends PDF to Claude AI API for analysis
-// 3. resetAnalyzer() - Clears all states and resets the form
-```
+PDF parsing fails
 
-### **API Integration**
-The application integrates with Anthropic's Claude AI API to analyze PDF documents. The integration includes:
-- File conversion to base64 format
-- HTTP POST request to Claude API endpoint
-- JSON response parsing
-- Error handling for failed requests
+Ensure PDFs are not password-protected
+Check file size (max 10MB by default)
+Verify PDF is not corrupted
 
----
+API calls fail
 
-## 🎯 Features Demonstration Checklist
+Verify backend URL in frontend (API_URL constant)
+Check browser console for errors
+Ensure backend server is running
 
-When demonstrating the project, please check:
+🚀 Deployment
+Backend (Heroku, Railway, etc.)
 
-- [ ] Application starts without errors
-- [ ] Upload interface is visible and functional
-- [ ] File upload works correctly
-- [ ] File information displays properly
-- [ ] UI is responsive and modern
-- [ ] Buttons have hover effects
-- [ ] Loading animation works during analysis
-- [ ] Error messages display when needed
-- [ ] Application can be reset and reused
-- [ ] All visual elements render correctly
+Set environment variables in your hosting platform
+Update CORS origins for your frontend domain
+Deploy backend code
 
----
+Frontend (Vercel, Netlify, etc.)
 
-## 🐛 Common Issues & Solutions
+Update API_URL to your backend URL
+Build the frontend: npm run build
+Deploy the build folder
 
-### **Issue 1: "npm is not recognized"**
-**Solution:** Node.js is not installed. Install from https://nodejs.org/
+📄 License
+MIT License - Feel free to use this project for personal or commercial purposes.
+🤝 Contributing
+Contributions are welcome! Please feel free to submit a Pull Request.
+💡 Tips
 
-### **Issue 2: "Module not found" errors**
-**Solution:** Run `npm install` again to reinstall dependencies
-
-### **Issue 3: Port 3000 already in use**
-**Solution:** 
-- Close other applications using port 3000
-- Or start on different port: `PORT=3001 npm start`
-
-### **Issue 4: Tailwind styles not applying**
-**Solution:** 
-- Verify `tailwind.config.js` exists
-- Check `index.css` has Tailwind directives
-- Restart the development server
-
-### **Issue 5: API Analysis not working**
-**Note:** The API requires an Anthropic API key. The UI and upload functionality will work, but actual AI analysis requires API authentication.
-
-## 📊 Project Statistics
-
-- **Total Components:** 1 main component (App.js)
-- **Lines of Code:** ~200+ lines in App.js
-- **Dependencies:** 10+ npm packages
-- **Styling Classes:** 50+ Tailwind utility classes
-- **API Endpoints:** 1 (Claude AI Messages API)
-- **File Types Supported:** PDF only
-
----
-
-## 🎓 Learning Outcomes
-
-Through this project, I have learned:
-
-1. **React Fundamentals**
-   - Component structure and JSX
-   - State management with Hooks
-   - Event handling
-   - Conditional rendering
-
-2. **API Integration**
-   - RESTful API calls
-   - Async/await operations
-   - File handling and base64 encoding
-   - Error handling
-
-3. **Modern CSS**
-   - Tailwind CSS utility classes
-   - Responsive design
-   - Animations and transitions
-
-4. **User Experience**
-   - Loading states
-   - Error messages
-   - File validation
-   - Intuitive UI design
-
----
-
-## 📞 Contact Information
-
-**Student:** Sravan  
-**Location:** Vizianagaram, Andhra Pradesh, IN  
-**Project Date:** December 2025  
-
----
-
-## 🔄 Version Control
-
-- **Version:** 1.0.0
-- **Last Updated:** December 13, 2025
-- **Status:** Completed and Ready for Review
-
----
-
+Use the "Brief" mode for quick summaries
+Use "Detailed" for comprehensive analysis
+Use "Keywords" for quick topic identification
+Enable dark mode for comfortable viewing
+Check history to compare analyses
