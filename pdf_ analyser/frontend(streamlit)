@@ -1,0 +1,17 @@
+import os
+import streamlit as st
+import pdfplumber
+import openai
+
+# ---------- API KEY ----------
+
+openai.api_key = os.getenv("OPENAI_API_KEY")
+
+# ---------- STREAMLIT UI ----------
+st.set_page_config(page_title="Gen AI PDF Analyzer", layout="centered")
+
+st.title("📄 Gen AI PDF Analyzer")
+st.write("Upload a PDF, get an AI summary, and ask questions.")
+
+uploaded_file = st.file_uploader("Upload a PDF", type=["pdf"])
+question = st.text_input("Ask a question about the document (optional)")
