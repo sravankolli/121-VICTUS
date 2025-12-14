@@ -1,1 +1,157 @@
+# SESSION STATE — CHAT MEMORY
+# -------------------------------------------------
+if "chat_history" not in st.session_state:
+    st.session_state.chat_history = []
 
+# -------------------------------------------------
+# SIDEBAR — CHAT HISTORY
+# -------------------------------------------------
+st.sidebar.title("💬 Chat History")
+
+if st.session_state.chat_history:
+    for i, chat in enumerate(st.session_state.chat_history, start=1):
+        st.sidebar.markdown(f"**Q{i}:** {chat['question']}")
+        st.sidebar.markdown(f"*A{i}:* {chat['answer']}")
+        st.sidebar.markdown("---")
+else:
+    st.sidebar.write("No questions yet.")
+
+if st.sidebar.button("🗑 Clear Chat"):
+    st.session_state.chat_history = []
+
+# -------------------------------------------------
+# HERO SECTION
+# -------------------------------------------------
+st.markdown("<h1 style='text-align:center;'>Intelligent Document Analyzer</h1>", unsafe_allow_html=True)
+st.markdown(
+    "<p style='text-align:center; font-size:17px;'>"
+    "Understand documents faster with AI-powered insights"
+    "</p>",
+    unsafe_allow_html=True
+)
+
+st.markdown("<br>", unsafe_allow_html=True)
+
+# -------------------------------------------------
+# USER INPUTS
+# -------------------------------------------------
+uploaded_file = st.file_uploader("Upload a PDF document", type=["pdf"])
+role = st.selectbox("Select reader role", list(ROLE_INSTRUCTIONS.keys()))
+question = st.text_input("Ask a question about the document (optional)")
+
+st.markdown("<br>", unsafe_allow_html=True)
+
+# -------------------------------------------------
+# MAIN ACTION
+# -------------------------------------------------
+if st.button("Analyze"):
+    if not uploaded_file:
+        st.warning("Please upload a PDF first.")
+    else:
+        with st.spinner("Reading document and generating insights..."):
+
+            text = ""
+            with pdfplumber.open(uploaded_file) as pdf:
+                for page in pdf.pages:
+                    if page.extract_text():
+                        text += page.extract_text() + "\n"
+
+            if not text.strip():
+                st.error("No readable text found.")
+            else:
+                trimmed_text = text[:4000]
+
+                # -------- SECTION EXTRACTION --------
+                sections = extract_sections(trimmed_text)
+
+                st.sidebar.subheader("📑 Document Sections")
+                selected_section = st.sidebar.selectbox(
+                    "Focus analysis on",
+                    list(sections.keys())
+                )
+
+                section_text = sections[selected_section]
+
+                # -------- SUMMARY --------
+                summary_prompt = f"""
+You are summarizing a document section for a {role}.
+{ROLE_INSTRUCTIONS[role]}
+
+Document Section:
+\"\"\"{section_text}\"\"\"
+"""
+
+                summary = client.chat.completions.create(
+                    model="llama-3.1-8b-instant",
+                    messages=[{"role": "user", "content": summary_prompt}],
+                    temperature=0.2
+                ).choices[0].message.content
+
+                pdf_time = estimate_reading_time(section_text)
+                summary_time = estimate_reading_time(summary, 250)
+                time_saved = round(pdf_time - summary_time, 1)
+
+                st.subheader(f"Executive Summary — {selected_section}")
+                st.write(summary)
+
+                st.subheader("Productivity Impact")
+                st.write(f"Time saved: **~{time_saved} minutes**")
+
+                # -------- DECISIONS --------
+                decision_prompt = f"""
+Extract Decisions, Recommendations, and Conclusions.
+
+Document Section:
+\"\"\"{section_text}\"\"\"
+"""
+
+                decisions = client.chat.completions.create(
+                    model="llama-3.1-8b-instant",
+                    messages=[{"role": "user", "content": decision_prompt}],
+                    temperature=0.1
+                ).choices[0].message.content
+
+                st.subheader("Key Decision Points")
+                st.write(decisions)
+
+                report = generate_report(summary, decisions, role, time_saved)
+
+                st.download_button(
+                    "Download Analysis Report",
+                    data=report,
+                    file_name="analysis_report.txt",
+                    mime="text/plain"
+                )
+
+                # -------- CHAT Q&A --------
+                if question:
+                    context = ""
+                    for chat in st.session_state.chat_history:
+                        context += f"Q: {chat['question']}\nA: {chat['answer']}\n"
+
+                    qa_prompt = f"""
+Previous conversation:
+{context}
+
+Document Section:
+\"\"\"{section_text}\"\"\"
+
+Current Question:
+{question}
+"""
+
+                    answer = client.chat.completions.create(
+                        model="llama-3.1-8b-instant",
+                        messages=[{"role": "user", "content": qa_prompt}],
+                        temperature=0.2
+                    ).choices[0].message.content
+
+                    st.subheader("Contextual Answer")
+                    st.write(answer)
+
+                    st.session_state.chat_history.append({
+                        "question": question,
+                        "answer": answer
+                    })
+
+        st.success("Analysis complete!")
