@@ -203,6 +203,45 @@ Secure API usage
 Real-world applicability
 
 
+Key Feature: Role-Based Summarization
+🔍 Problem It Solves
+
+Different users require different explanations from the same document.
+A student, researcher, and manager do not look for the same insights in a PDF.
+
+Traditional AI summarizers generate a one-size-fits-all summary, which often:
+
+Overwhelms beginners
+
+Misses decision-oriented insights
+
+Fails to adapt tone and depth
+
+💡 Our Solution
+
+We implemented Role-Based Summarization, where the AI adapts its output based on the reader’s role.
+
+The user selects a role before analysis:
+
+Student
+
+Teacher
+
+Researcher
+
+Manager
+
+The system then dynamically modifies the AI prompt so that:
+
+Language complexity
+
+Level of detail
+
+Focus of explanation
+
+are aligned with the selected role.
+
+
 
 
 
