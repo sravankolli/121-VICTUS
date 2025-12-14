@@ -1,4 +1,4 @@
-# 📄 PDF AI Analyzer - Project Documentation
+# 📄 Intelligent Document Analyser - Project Documentation
 
 **TEAM NAME:** team VICTUS 
 Problem Statement
