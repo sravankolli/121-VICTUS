@@ -1,0 +1,55 @@
+# -------------------------------------------------
+# GROQ CLIENT SETUP
+# -------------------------------------------------
+client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+
+# -------------------------------------------------
+# ROLE-BASED INSTRUCTIONS
+# -------------------------------------------------
+ROLE_INSTRUCTIONS = {
+    "Student": "Explain step by step in very simple language.",
+    "Teacher": "Explain concepts clearly with teaching insights.",
+    "Researcher": "Provide deep technical explanation and limitations.",
+    "Manager": "Focus on decisions, outcomes, and business impact."
+}
+
+# -------------------------------------------------
+# STREAMLIT CONFIG
+# -------------------------------------------------
+st.set_page_config(page_title="Intelligent Document Analyzer", layout="centered")
+safe_background_ui("https://images.unsplash.com/photo-1557683316-973673baf926")
+
+# -------------------------------------------------
+# SESSION STATE — CHAT MEMORY
+# -------------------------------------------------
+if "chat_history" not in st.session_state:
+    st.session_state.chat_history = []
+
+# -------------------------------------------------
+# SIDEBAR — CHAT HISTORY
+# -------------------------------------------------
+st.sidebar.title("💬 Chat History")
+
+if st.session_state.chat_history:
+    for i, chat in enumerate(st.session_state.chat_history, start=1):
+        st.sidebar.markdown(f"**Q{i}:** {chat['question']}")
+        st.sidebar.markdown(f"*A{i}:* {chat['answer']}")
+        st.sidebar.markdown("---")
+else:
+    st.sidebar.write("No questions yet.")
+
+if st.sidebar.button("🗑 Clear Chat"):
+    st.session_state.chat_history = []
+
+# -------------------------------------------------
+# HERO SECTION
+# -------------------------------------------------
+st.markdown("<h1 style='text-align:center;'>Intelligent Document Analyzer</h1>", unsafe_allow_html=True)
+st.markdown(
+    "<p style='text-align:center; font-size:17px;'>"
+    "Understand documents faster with AI-powered insights"
+    "</p>",
+    unsafe_allow_html=True
+)
+
+st.markdown("<br>", unsafe_allow_html=True)
