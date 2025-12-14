@@ -20,7 +20,7 @@ The problem:
 
 💡 Solution Overview
 
-We built a Gen-AI powered PDF Analyzer that:
+We built a Gen-AI powered Intelligent Document Analyser that:
 
 Accepts a PDF file
 
