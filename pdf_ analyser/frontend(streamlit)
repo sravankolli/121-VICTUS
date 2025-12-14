@@ -1,10 +1,5 @@
-import os
-import streamlit as st
-import pdfplumber
-from groq import Groq
-
-# -------------------------------------------------
-# SAFE UI STYLING (BACKGROUND + READABLE CARD)
+ -------------------------------------------------
+# SAFE UI STYLING (PROFESSIONAL iOS-STYLE BUTTONS)
 # -------------------------------------------------
 def safe_background_ui(image_url):
     st.markdown(
@@ -38,17 +33,20 @@ def safe_background_ui(image_url):
         }}
 
         .stButton > button {{
-            background: #007aff;
+            background: linear-gradient(180deg, #007aff, #005ecb);
             color: white;
-            border-radius: 12px;
+            border-radius: 14px;
             border: none;
-            padding: 0.6rem 1.5rem;
-            font-size: 16px;
-            font-weight: 500;
+            padding: 0.75rem 1.6rem;
+            font-size: 15px;
+            font-weight: 600;
+            box-shadow: 0 6px 14px rgba(0,122,255,0.25);
+            transition: all 0.2s ease-in-out;
         }}
 
         .stButton > button:hover {{
-            background: #005ecb;
+            background: linear-gradient(180deg, #1a86ff, #0066dd);
+            transform: translateY(-1px);
         }}
 
         input, textarea {{
@@ -58,73 +56,3 @@ def safe_background_ui(image_url):
         """,
         unsafe_allow_html=True
     )
-
-# -------------------------------------------------
-# HELPER FUNCTIONS
-# -------------------------------------------------
-def estimate_reading_time(text, words_per_minute=200):
-    return round(len(text.split()) / words_per_minute, 1)
-
-def generate_report(summary, decisions, role, time_saved):
-    return f"""
-INTELLIGENT DOCUMENT ANALYSIS REPORT
-===================================
-
-Selected Role:
-{role}
-
-EXECUTIVE SUMMARY
------------------
-{summary}
-
-KEY DECISION POINTS
-------------------
-{decisions}
-
-PRODUCTIVITY IMPACT
-------------------
-Estimated time saved: ~{time_saved} minutes
-"""
-
-# -------------------------------------------------
-# FEATURE: DOCUMENT SECTION EXTRACTION
-# -------------------------------------------------
-def extract_sections(text):
-    sections = {"Full Document": ""}
-    current_section = "Full Document"
-
-    for line in text.split("\n"):
-        clean = line.strip()
-
-        if (
-            clean.isupper() and 3 < len(clean) < 80
-        ) or (
-            clean.istitle() and len(clean.split()) <= 6
-        ):
-            current_section = clean
-            sections[current_section] = ""
-        else:
-            sections[current_section] += line + "\n"
-
-    return sections
-
-# -------------------------------------------------
-# GROQ CLIENT SETUP
-# -------------------------------------------------
-client = Groq(api_key=os.getenv("GROQ_API_KEY"))
-
-# -------------------------------------------------
-# ROLE-BASED INSTRUCTIONS
-# -------------------------------------------------
-ROLE_INSTRUCTIONS = {
-    "Student": "Explain step by step in very simple language.",
-    "Teacher": "Explain concepts clearly with teaching insights.",
-    "Researcher": "Provide deep technical explanation and limitations.",
-    "Manager": "Focus on decisions, outcomes, and business impact."
-}
-
-# -------------------------------------------------
-# STREAMLIT CONFIG
-# -------------------------------------------------
-st.set_page_config(page_title="Intelligent Document Analyzer", layout="centered")
-safe_background_ui("https://images.unsplash.com/photo-1557683316-973673baf926")
