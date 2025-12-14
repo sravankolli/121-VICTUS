@@ -203,13 +203,13 @@ Secure API usage
 Real-world applicability
 
 
-Key Feature: Role-Based Summarization
+  [Feature 1 : Role-Based Summarization ]
 🔍 Problem It Solves
 
-Different users require different explanations from the same document.
+"Different users require different explanations from the same document."
 A student, researcher, and manager do not look for the same insights in a PDF.
 
-Traditional AI summarizers generate a one-size-fits-all summary, which often:
+"Traditional AI summarizers generate a one-size-fits-all summary, which often:"
 
 Overwhelms beginners
 
@@ -217,9 +217,9 @@ Misses decision-oriented insights
 
 Fails to adapt tone and depth
 
-💡 Our Solution
+[💡 Our Solution ]
 
-We implemented Role-Based Summarization, where the AI adapts its output based on the reader’s role.
+"We implemented Role-Based Summarization, where the AI adapts its output based on the reader’s role."
 
 The user selects a role before analysis:
 
@@ -239,7 +239,32 @@ Level of detail
 
 Focus of explanation
 
-are aligned with the selected role.
+are aligned with the selected role. 
+
+[Feature 2: Time-Saving Estimation (Quantified Impact)]
+🔍 Problem It Solves
+
+Most AI summarization tools claim to “save time” — but they don’t prove it.
+
+Judges, users, and stakeholders often ask:
+
+“How much time does this actually save?”
+
+Without measurable impact, AI features feel impressive but vague.
+
+[💡 Our Solution]
+
+"We introduced a Time-Saving Estimation feature that quantifies productivity gains."
+
+Instead of just showing an AI summary, the application:
+
+Estimates how long it would take to read the full document
+
+Estimates how long it would take to read the AI-generated summary
+
+Clearly displays the approximate time saved
+
+This converts AI output into tangible, user-visible value.
 
 
 
