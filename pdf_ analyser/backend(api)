@@ -1,123 +1,139 @@
 # -------------------------------------------------
-# USER INPUTS
+# HELPERS
 # -------------------------------------------------
-uploaded_file = st.file_uploader("Upload a PDF document", type=["pdf"])
-role = st.selectbox("Select reader role", list(ROLE_INSTRUCTIONS.keys()))
-question = st.text_input("Ask a question about the document (optional)")
+def extract_sections(text):
+    sections = {"Full Document": ""}
+    current = "Full Document"
+    for line in text.split("\n"):
+        clean = line.strip()
+        if (clean.isupper() and 3 < len(clean) < 80) or (
+            clean.istitle() and len(clean.split()) <= 6
+        ):
+            current = clean
+            sections[current] = ""
+        else:
+            sections[current] += line + "\n"
+    return sections
 
-st.markdown("<br>", unsafe_allow_html=True)
+# -------------------------------------------------
+# 🎤 VOICE TO TEXT
+# -------------------------------------------------
+def voice_to_text():
+    r = sr.Recognizer()
+    with sr.Microphone() as source:
+        st.info("🎤 Listening...")
+        audio = r.listen(source)
+    try:
+        return r.recognize_google(audio)
+    except:
+        return "Could not recognize speech."
+if "chat_history" not in st.session_state:
+    st.session_state.chat_history = []
 
 # -------------------------------------------------
-# MAIN ACTION
+# SIDEBAR
 # -------------------------------------------------
-if st.button("Analyze"):
+st.sidebar.title("💬 Chat History")
+for chat in st.session_state.chat_history:
+    st.sidebar.markdown(f"**Q:** {chat['question']}")
+    st.sidebar.markdown(f"*A:* {chat['answer']}")
+    st.sidebar.markdown("---")
+
+# -------------------------------------------------
+# HERO
+# -------------------------------------------------
+st.markdown("<h1 style='text-align:center;'>Intelligent Document Analyzer</h1>", unsafe_allow_html=True)
+st.markdown("<p style='text-align:center;'>AI-powered document understanding</p>", unsafe_allow_html=True)
+
+# -------------------------------------------------
+# INPUTS
+# -------------------------------------------------
+uploaded_file = st.file_uploader("Upload PDF", type=["pdf"])
+role = st.selectbox("Reader role", ROLE_INSTRUCTIONS.keys())
+language = st.selectbox("Output language", LANGUAGE_INSTRUCTIONS.keys())
+summary_level = st.radio("Summary detail level", SUMMARY_LENGTH.keys(), horizontal=True)
+question = st.text_input("Ask a question (optional)")
+
+if st.button("🎤 Speak Question"):
+    question = voice_to_text()
+    st.success(f"Recognized: {question}")
+
+# -------------------------------------------------
+# MAIN LOGIC WITH PROGRESS BAR
+# -------------------------------------------------
+if st.button("🚀 Analyze Document"):
     if not uploaded_file:
-        st.warning("Please upload a PDF first.")
+        st.warning("Upload a PDF first.")
     else:
-        with st.spinner("Reading document and generating insights..."):
+        progress = st.progress(0)
+        status = st.empty()
 
-            text = ""
-            with pdfplumber.open(uploaded_file) as pdf:
-                for page in pdf.pages:
-                    if page.extract_text():
-                        text += page.extract_text() + "\n"
+        status.text("📄 Reading PDF...")
+        progress.progress(20)
+        time.sleep(0.4)
 
-            if not text.strip():
-                st.error("No readable text found.")
-            else:
-                trimmed_text = text[:4000]
+        text = ""
+        with pdfplumber.open(uploaded_file) as pdf:
+            for page in pdf.pages:
+                if page.extract_text():
+                    text += page.extract_text() + "\n"
 
-                # -------- SECTION EXTRACTION --------
-                sections = extract_sections(trimmed_text)
+        status.text("🧠 Structuring document...")
+        progress.progress(40)
+        time.sleep(0.4)
 
-                st.sidebar.subheader("📑 Document Sections")
-                selected_section = st.sidebar.selectbox(
-                    "Focus analysis on",
-                    list(sections.keys())
-                )
+        sections = extract_sections(text[:4000])
+        selected = st.selectbox("Analyze section", sections.keys())
+        section_text = sections[selected]
 
-                section_text = sections[selected_section]
+        status.text("✍️ Generating AI summary...")
+        progress.progress(65)
 
-                # -------- SUMMARY --------
-                summary_prompt = f"""
-You are summarizing a document section for a {role}.
+        summary_prompt = f"""
 {ROLE_INSTRUCTIONS[role]}
+{LANGUAGE_INSTRUCTIONS[language]}
+{SUMMARY_LENGTH[summary_level]}
 
-Document Section:
+Document:
 \"\"\"{section_text}\"\"\"
 """
 
-                summary = client.chat.completions.create(
-                    model="llama-3.1-8b-instant",
-                    messages=[{"role": "user", "content": summary_prompt}],
-                    temperature=0.2
-                ).choices[0].message.content
+        summary = client.chat.completions.create(
+            model="llama-3.1-8b-instant",
+            messages=[{"role": "user", "content": summary_prompt}],
+            temperature=0.2
+        ).choices[0].message.content
 
-                pdf_time = estimate_reading_time(section_text)
-                summary_time = estimate_reading_time(summary, 250)
-                time_saved = round(pdf_time - summary_time, 1)
+        status.text("💬 Answering questions...")
+        progress.progress(85)
 
-                st.subheader(f"Executive Summary — {selected_section}")
-                st.write(summary)
+        st.subheader("📌 Summary")
+        st.write(summary)
 
-                st.subheader("Productivity Impact")
-                st.write(f"Time saved: **~{time_saved} minutes**")
+        if question:
+            qa_prompt = f"""
+{LANGUAGE_INSTRUCTIONS[language]}
 
-                # -------- DECISIONS --------
-                decision_prompt = f"""
-Extract Decisions, Recommendations, and Conclusions.
-
-Document Section:
-\"\"\"{section_text}\"\"\"
-"""
-
-                decisions = client.chat.completions.create(
-                    model="llama-3.1-8b-instant",
-                    messages=[{"role": "user", "content": decision_prompt}],
-                    temperature=0.1
-                ).choices[0].message.content
-
-                st.subheader("Key Decision Points")
-                st.write(decisions)
-
-                report = generate_report(summary, decisions, role, time_saved)
-
-                st.download_button(
-                    "Download Analysis Report",
-                    data=report,
-                    file_name="analysis_report.txt",
-                    mime="text/plain"
-                )
-
-                # -------- CHAT Q&A --------
-                if question:
-                    context = ""
-                    for chat in st.session_state.chat_history:
-                        context += f"Q: {chat['question']}\nA: {chat['answer']}\n"
-
-                    qa_prompt = f"""
-Previous conversation:
-{context}
-
-Document Section:
+Document:
 \"\"\"{section_text}\"\"\"
 
-Current Question:
+Question:
 {question}
 """
+            answer = client.chat.completions.create(
+                model="llama-3.1-8b-instant",
+                messages=[{"role": "user", "content": qa_prompt}],
+                temperature=0.2
+            ).choices[0].message.content
 
-                    answer = client.chat.completions.create(
-                        model="llama-3.1-8b-instant",
-                        messages=[{"role": "user", "content": qa_prompt}],
-                        temperature=0.2
-                    ).choices[0].message.content
+            st.subheader("❓ Answer")
+            st.write(answer)
 
-                    st.subheader("Contextual Answer")
-                    st.write(answer)
+            st.session_state.chat_history.append({
+                "question": question,
+                "answer": answer
+            })
 
-                    st.session_state.chat_history.append({
-                        "question": question,
-                        "answer": answer
-                    })
-
-        st.success("Analysis complete!")
+        progress.progress(100)
+        status.empty()
+        st.success("✅ Analysis complete!")
