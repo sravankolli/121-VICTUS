@@ -266,7 +266,50 @@ Clearly displays the approximate time saved
 
 This converts AI output into tangible, user-visible value.
 
+⭐ Feature 3: Key Decision Points Extraction (Actionable Intelligence)
+🔍 Problem It Solves
 
+"Most AI summarization tools explain what a document says, but they do not clearly answer:"
 
+users often don’t need a full summary — they need actionable insights.
 
+[💡 Our Solution ]
 
+"We implemented a Key Decision Points Extraction feature that automatically identifies and extracts:"
+
+Decisions — explicit or implied choices made in the document
+
+Recommendations — suggested actions or next steps
+
+Conclusions — final outcomes or takeaways
+
+"Instead of reading the entire document, users can immediately focus on what matters most for decision-making."
+[ Feature 4: 🔗 Share & Export Analysis Report (Feature: Collaboration & Reusability)]
+📌 Problem It Solves
+
+AI insights lose value if they stay inside the application.
+In real-world workflows, users need to share analysis results with teammates, managers, or stakeholders without re-running the AI model. 
+.
+
+[💡 Our Approach]
+
+After analyzing a PDF, the application generates a structured analysis report that can be downloaded and shared instantly.
+
+Problem It Solves
+
+Most AI document tools treat each question as an isolated request.
+This forces users to repeatedly restate context, breaking natural interaction and reducing usefulness for real analysis.
+
+[💡 Our Solution]
+
+The application includes a session-based conversational chat history, allowing users to ask multiple, related questions about the same document.
+
+Each new response is generated using:
+
+the uploaded document
+
+previous questions and answers
+
+current user query
+
+This enables multi-turn, context-aware interaction instead of one-off Q&A
